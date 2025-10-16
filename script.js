@@ -628,12 +628,51 @@ class BaccaratGame {
 
     newGame() {
         this.gameState = 'betting';
-        this.bets = { banker: 0, player: 0, tie: 0, bankerBonus: 0, bankerSuper: 0 };
+        
+        // 自動重複上次下注（如果有的話）
+        const hasLastBets = this.lastBets.banker > 0 || this.lastBets.player > 0 || this.lastBets.tie > 0 || this.lastBets.bankerBonus > 0 || this.lastBets.bankerSuper > 0;
+        if (hasLastBets) {
+            const totalLastBet = this.lastBets.banker + this.lastBets.player + this.lastBets.tie + this.lastBets.bankerBonus + this.lastBets.bankerSuper;
+            
+            // 檢查餘額是否足夠重複下注
+            if (this.balance >= totalLastBet) {
+                // 自動應用上次的下注
+                this.bets = { ...this.lastBets };
+                this.bankerBonusBase = this.lastBankerBonusBase;
+                this.bankerSuperBase = this.lastBankerSuperBase;
+                this.balance -= totalLastBet;
+                
+                // 如果有莊家加收下注，重新生成賠率
+                if (this.bets.bankerBonus > 0) {
+                    this.generateBonusMultiplier();
+                }
+                
+                // 如果有超級加押，重新生成賠率
+                if (this.bets.bankerSuper > 0) {
+                    this.generateSuperMultiplier();
+                }
+                
+                // 顯示賠率（如果有加收下注或超級加押）
+                if ((this.bets.bankerBonus > 0 && this.bonusMultiplier) || (this.bets.bankerSuper > 0 && this.superMultiplier)) {
+                    this.showBonusOdds();
+                }
+            } else {
+                // 餘額不足時清空下注
+                this.bets = { banker: 0, player: 0, tie: 0, bankerBonus: 0, bankerSuper: 0 };
+                this.bankerBonusBase = 0;
+                this.bankerSuperBase = 0;
+            }
+        } else {
+            // 沒有上次下注記錄時清空
+            this.bets = { banker: 0, player: 0, tie: 0, bankerBonus: 0, bankerSuper: 0 };
+            this.bankerBonusBase = 0;
+            this.bankerSuperBase = 0;
+            // 清除賠率
+            this.bonusMultiplier = null;
+            this.superMultiplier = null;
+        }
+        
         this.currentCards = { banker: [], player: [] };
-        this.bonusMultiplier = null;
-        this.superMultiplier = null;
-        this.bankerBonusBase = 0;
-        this.bankerSuperBase = 0;
         
         // 檢查牌組狀況
         this.checkAndReshuffleIfNeeded();
@@ -644,8 +683,10 @@ class BaccaratGame {
         document.getElementById('player-score').textContent = '0';
         document.getElementById('banker-score').textContent = '0';
         
-        // 隱藏加收賠率
-        this.hideBonusOdds();
+        // 只有在沒有自動重複下注的情況下才隱藏賠率
+        if (!hasLastBets || this.balance < (this.lastBets.banker + this.lastBets.player + this.lastBets.tie + this.lastBets.bankerBonus + this.lastBets.bankerSuper)) {
+            this.hideBonusOdds();
+        }
         
         // 清除下注區的高亮
         document.querySelectorAll('.bet-option').forEach(option => {
