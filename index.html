@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百家樂遊戲</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>百家樂遊戲</h1>
+            <div class="balance">
+                <span>餘額: $<span id="balance">1000</span></span>
+            </div>
+        </header>
+
+        <div class="game-board">
+            <!-- 遊戲區域 -->
+            <div class="cards-area">
+                <div class="banker-area">
+                    <h3>莊家</h3>
+                    <div class="cards-container" id="banker-cards">
+                        <!-- 莊家牌區 -->
+                    </div>
+                    <div class="score" id="banker-score">0</div>
+                    <div class="bonus-odds-display" id="banker-bonus-odds-display" style="display: none;">
+                        <span class="odds-label">加收賠率:</span>
+                        <span class="odds-value" id="banker-odds-value">1:2</span>
+                    </div>
+                    <div class="bonus-odds-display super-odds" id="banker-super-odds-display" style="display: none;">
+                        <span class="odds-label">超級賠率:</span>
+                        <span class="odds-value" id="banker-super-odds-value">1:9</span>
+                    </div>
+                </div>
+
+                <div class="player-area">
+                    <h3>閒家</h3>
+                    <div class="cards-container" id="player-cards">
+                        <!-- 閒家牌區 -->
+                    </div>
+                    <div class="score" id="player-score">0</div>
+                </div>
+            </div>
+
+            <!-- 下注區域 -->
+            <div class="betting-area">
+                <h3>下注區域</h3>
+                <div class="bet-options">
+                    <div class="bet-option" id="bet-banker">
+                        <h4>莊家贏</h4>
+                        <div class="payout">1:0.95</div>
+                        <div class="bet-amount" id="banker-bet">$0</div>
+                    </div>
+                    
+                    <div class="bet-option" id="bet-player">
+                        <h4>閒家贏</h4>
+                        <div class="payout">1:1</div>
+                        <div class="bet-amount" id="player-bet">$0</div>
+                    </div>
+                    
+                    <div class="bet-option" id="bet-tie">
+                        <h4>和局</h4>
+                        <div class="payout">1:8</div>
+                        <div class="bet-amount" id="tie-bet">$0</div>
+                    </div>
+
+                    <div class="bet-option special-bet" id="bet-banker-bonus">
+                        <h4>莊家贏加收</h4>
+                        <div class="payout">基本下注 + 50%加收</div>
+                        <div class="bet-amount" id="banker-bonus-bet">$0</div>
+                        <div class="bet-breakdown" id="banker-bonus-breakdown" style="display: none;">
+                            <small>基本: $<span id="base-amount">0</span> + 加收: $<span id="fee-amount">0</span></small>
+                        </div>
+                    </div>
+
+                    <div class="bet-option super-bet" id="bet-banker-super">
+                        <h4>超級加押版</h4>
+                        <div class="payout">基本下注 + 400%加收</div>
+                        <div class="bet-amount" id="banker-super-bet">$0</div>
+                        <div class="bet-breakdown" id="banker-super-breakdown" style="display: none;">
+                            <small>基本: $<span id="super-base-amount">0</span> + 加收: $<span id="super-fee-amount">0</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <div class="bet-controls">
+                    <h4>下注金額</h4>
+                    <div class="chip-selection">
+                        <button class="chip" data-value="10">$10</button>
+                        <button class="chip" data-value="25">$25</button>
+                        <button class="chip" data-value="50">$50</button>
+                        <button class="chip" data-value="100">$100</button>
+                    </div>
+                    <div class="selected-chip">已選擇: $<span id="selected-chip">10</span></div>
+                </div>
+
+                <div class="game-controls">
+                    <button id="deal-btn" class="action-btn">發牌</button>
+                    <button id="repeat-bet-btn" class="action-btn">重複下注</button>
+                    <button id="clear-bets-btn" class="action-btn">清除下注</button>
+                    <button id="new-game-btn" class="action-btn">新遊戲</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 遊戲結果顯示 -->
+        <div class="result-popup" id="result-popup" style="display: none;">
+            <div class="result-content">
+                <h3 id="result-title">遊戲結果</h3>
+                <p id="result-message"></p>
+                <p id="winnings"></p>
+                <button id="continue-btn" class="action-btn">繼續遊戲</button>
+            </div>
+        </div>
+
+        <!-- 遊戲歷史 -->
+        <div class="game-history">
+            <h4>遊戲歷史</h4>
+            <div class="history-grid" id="history-grid">
+                <!-- 歷史結果會在這裡顯示 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
